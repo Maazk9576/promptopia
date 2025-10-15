@@ -11,7 +11,9 @@ import {
 } from "next-auth/react";
 import Button from "./Button";
 const Nav = () => {
-  const isUserLoggedIn = true;
+  // const isUserLoggedIn = useSession;
+  const { data: session } = useSession();
+  const isUserLoggedIn = session?.user;
   const [providers, setProviders] = useState<Record<
     string,
     ClientSafeProvider
@@ -47,7 +49,9 @@ const Nav = () => {
               <Link href="/profile">
                 <Image
                   alt="profile pic"
-                  src="https://i.pravatar.cc/300?img=5"
+                  src={
+                    session?.user?.image || "https://i.pravatar.cc/300?img=5"
+                  }
                   width={37}
                   height={37}
                   className="rounded-full"
@@ -57,15 +61,17 @@ const Nav = () => {
           ) : (
             <>
               {/* Providers as ClientSafeProvider[] nbhi le sakte  hain yeh type “Hey, trust me — these values are ClientSafeProvider objects.” */}
-              {providers &&
-                Object.values(providers).map((provider) => (
-                  <Button
-                    key={provider.name}
-                    name="Sign In"
-                    onClick={() => signIn(provider.id)}
-                    className="black_btn"
-                  />
-                ))}
+              <div className="flex flex-row justify-center gap-2">
+                {providers &&
+                  Object.values(providers).map((provider) => (
+                    <Button
+                      key={provider.name}
+                      name={`Sign in with ${provider.name}`}
+                      onClick={() => signIn(provider.id)}
+                      className="black_btn"
+                    />
+                  ))}
+              </div>
             </>
           )}
         </div>
